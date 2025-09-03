@@ -37,7 +37,7 @@ export default function ChatPage() {
     return (
       <div className="flex h-full">
         <div className="w-1/4 pr-6">
-          <h2 className="text-lg font-semibold mb-4">Chat History</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">Chat History</h2>
           <div className="animate-pulse">
             <div className="h-4 bg-gray-200 rounded mb-4"></div>
             <div className="h-4 bg-gray-200 rounded mb-4"></div>
@@ -60,7 +60,7 @@ export default function ChatPage() {
   return (
     <div className="flex h-full">
       <div className="w-1/4 pr-6">
-        <h2 className="text-lg font-semibold mb-4">Chat History</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-800">Chat History</h2>
         <div className="space-y-2">
           {chatSessions.map(session => (
             <div 
