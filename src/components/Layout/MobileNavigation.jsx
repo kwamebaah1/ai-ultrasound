@@ -5,8 +5,10 @@ import {
   FaHome, 
   FaUpload, 
   FaChartArea, 
-  FaComments
+  FaComments,
 } from 'react-icons/fa'
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 
 const navigationItems = [
   { name: 'Dashboard', href: '/dashboard', icon: FaHome },
@@ -17,6 +19,27 @@ const navigationItems = [
 
 export default function MobileNavigation() {
   const pathname = usePathname()
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    getUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user ?? null)
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  if (!user) {
+    return null
+  }
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-100 z-50">
