@@ -9,7 +9,7 @@ import LoadingIndicator from '@/components/LoadingIndicator'
 import DiagnosisResult from '@/components/DiagnosisResult'
 import ProbabilityBar from '@/components/ProbabilityBar'
 import UploadArea from '@/components/UploadArea'
-import { pollHeatmap } from '@/components/Heatmap/pollHeatmap'
+import pollHeatmap from '@/components/Heatmap/Heatmap'
 
 export default function UploadPage() {
   const [image, setImage] = useState(null)
