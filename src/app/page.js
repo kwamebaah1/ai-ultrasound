@@ -43,7 +43,7 @@ export default function Dashboard() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Dashboard
           </h1>
-          <p className="text-gray-500 mt-1">Welcome back! Here's your analysis overview.</p>
+          <p className="text-gray-500 mt-1">Welcome back! Here&apos;s your analysis overview.</p>
         </div>
         <div className="mt-4 sm:mt-0">
           <QuickActions />
