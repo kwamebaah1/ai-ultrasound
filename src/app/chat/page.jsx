@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import ChatBot from '@/components/ChatBot/ChatBot'
+import ChatBot from '@/components/Chatbot/ChatBot'
 
 export default function ChatPage() {
   const [chatSessions, setChatSessions] = useState([])
