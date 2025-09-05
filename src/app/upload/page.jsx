@@ -45,6 +45,63 @@ export default function UploadPage() {
     return () => clearInterval(interval)
   }, [isLoading])
 
+  // Upload image to Supabase Storage
+  const uploadImageToStorage = async (file) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('User not authenticated')
+      
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`
+      const filePath = `ultrasounds/${fileName}`
+      
+      const { error: uploadError } = await supabase.storage
+        .from('ultrasounds')
+        .upload(filePath, file)
+      
+      if (uploadError) throw uploadError
+      
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('ultrasounds')
+        .getPublicUrl(filePath)
+      
+      return publicUrl
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      return null
+    }
+  }
+
+  // Update analysis with image URL
+  const updateAnalysisWithImage = async (analysisId, imageUrl) => {
+    try {
+      const { error } = await supabase
+        .from('analyses')
+        .update({ image_url: imageUrl })
+        .eq('id', analysisId)
+      
+      if (error) throw error
+    } catch (error) {
+      console.error('Error updating analysis with image:', error)
+    }
+  }
+
+  // Update analysis with heatmap URL
+  const updateAnalysisWithHeatmap = async (analysisId, heatmapUrl) => {
+    try {
+      const { error } = await supabase
+        .from('analyses')
+        .update({ heatmap_url: heatmapUrl })
+        .eq('id', analysisId)
+      
+      if (error) throw error
+      console.log('Analysis updated with heatmap:', heatmapUrl)
+    } catch (error) {
+      console.error('Error updating analysis with heatmap:', error)
+    }
+  }
+
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -70,7 +127,7 @@ export default function UploadPage() {
     reader.readAsDataURL(file)
   }
 
-  const saveAnalysis = async (result, heatmapUrl) => {
+  const saveAnalysis = async (result) => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       
@@ -87,8 +144,8 @@ export default function UploadPage() {
             confidence: result.confidence,
             benign_prob: result.benign,
             malignant_prob: result.malignant,
-            heatmap_url: heatmapUrl,
             advice: result.advice
+            // image_url and heatmap_url will be added later
           }
         ])
         .select()
@@ -126,11 +183,7 @@ export default function UploadPage() {
 
       const result = await response.json()
 
-      if (result.diagnosis === 'Malignant') {
-        setHeatmapLoading(true)
-        pollHeatmap(result.id, setHeatmapUrl, setHeatmapLoading)
-      }
-
+      // Get AI explanation while heatmap is generating
       const initialPrompt = `Explain briefly and clearly what it means when a deep learning model diagnoses a breast ultrasound as "${result.diagnosis}" with ${result.confidence.toFixed(1)}% confidence. Respond in under 3 sentences and end by inviting the user to ask for more details if needed.`
       
       const chatResponse = await fetch('/api/chatbot', {
@@ -156,10 +209,28 @@ export default function UploadPage() {
       
       setPrediction(processedResult)
       
-      // Save analysis to Supabase
-      const savedAnalysis = await saveAnalysis(processedResult, heatmapUrl)
+      // Save initial analysis to Supabase (without image and heatmap)
+      const savedAnalysis = await saveAnalysis(processedResult)
       if (savedAnalysis) {
         setAnalysisId(savedAnalysis.id)
+        
+        // Upload image to storage and update analysis
+        setLoadingProgress("Saving your analysis...")
+        const imageUrl = await uploadImageToStorage(image)
+        if (imageUrl) {
+          await updateAnalysisWithImage(savedAnalysis.id, imageUrl)
+        }
+        
+        // Start heatmap generation if malignant
+        if (result.diagnosis === 'Malignant') {
+          setHeatmapLoading(true)
+          pollHeatmap(result.id, (heatmapUrl) => {
+            setHeatmapUrl(heatmapUrl)
+            setHeatmapLoading(false)
+            // Update analysis with heatmap URL
+            updateAnalysisWithHeatmap(savedAnalysis.id, heatmapUrl)
+          }, setHeatmapLoading)
+        }
       }
     } catch (err) {
       setError('Failed to get prediction. Please try again later.')
@@ -304,6 +375,7 @@ export default function UploadPage() {
                   initialAdvice={prediction.advice}
                   diagnosis={prediction.diagnosis}
                   confidence={prediction.confidence}
+                  analysisId={analysisId}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center h-full">
