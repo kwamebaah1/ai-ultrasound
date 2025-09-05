@@ -55,7 +55,7 @@ export default function HeatmapViewer() {
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
-            <h2 className="text-lg font-semibold mb-4">Analysis Details</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-600">Analysis Details</h2>
             
             <DiagnosisResult diagnosis={analysis.diagnosis} confidence={analysis.confidence} />
             
@@ -80,7 +80,7 @@ export default function HeatmapViewer() {
           </div>
           
           <div>
-            <h2 className="text-lg font-semibold mb-4">Heatmap Visualization</h2>
+            <h2 className="text-lg font-semibold text-gray-600 mb-4">Heatmap Visualization</h2>
             
             {analysis.heatmap_url ? (
               <HeatmapVisualization 
