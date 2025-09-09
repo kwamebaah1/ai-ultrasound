@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaGoogle, FaGithub } from 'react-icons/fa'
+import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash } from 'react-icons/fa'
 
 export default function Signup() {
   const [email, setEmail] = useState('')
@@ -51,19 +51,19 @@ export default function Signup() {
 
       if (data.user) {
         // Insert user profile into database
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: data.user.id,
-              email: data.user.email,
-              full_name: fullName,
-              user_type: 'medical_professional',
-              created_at: new Date().toISOString(),
-            }
-          ])
+        //const { error: profileError } = await supabase
+          //.from('profiles')
+          //.insert([
+            //{
+              //id: data.user.id,
+              //email: data.user.email,
+              //full_name: fullName,
+              //user_type: 'medical_professional',
+              //created_at: new Date().toISOString(),
+           // }
+          //])
 
-        if (profileError) throw profileError
+        //if (profileError) throw profileError
 
         router.push('/verify-email')
       }
@@ -136,7 +136,7 @@ export default function Signup() {
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 text-gray-700 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -158,7 +158,7 @@ export default function Signup() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 text-gray-700 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Enter your email"
                 />
               </div>
