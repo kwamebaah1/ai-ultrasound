@@ -133,10 +133,10 @@ export default function Navigation() {
                 </div>
                 
                 <div className="space-y-2">
-                  <button className="flex items-center w-full px-4 py-3 text-gray-600 rounded-xl hover:bg-white/50 hover:text-blue-600 transition-all">
+                  {/*<button className="flex items-center w-full px-4 py-3 text-gray-600 rounded-xl hover:bg-white/50 hover:text-blue-600 transition-all">
                     <FaCog className="mr-3" />
                     <span className="font-medium">Settings</span>
-                  </button>
+                  </button>*/}
                   
                   <button 
                     onClick={handleSignOut}

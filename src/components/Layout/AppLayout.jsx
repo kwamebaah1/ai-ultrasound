@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
-const authFreeRoutes = ['/login', '/signup']
+const authFreeRoutes = ['/login', '/signup', '/verify-email']
 
 export default function AppLayout({ children }) {
   const pathname = usePathname()
